@@ -24,5 +24,5 @@
 * should log the `err.message` to standard error
 * if the error is an `AppError`
  * respond with err.statusCode and err.responseMessage
-* if ther error is not an `AppError`
+* if ther error is **not** an `AppError`
  * respond with statusCode 500 and your server error message
