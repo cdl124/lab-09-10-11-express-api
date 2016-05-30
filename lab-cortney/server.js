@@ -11,7 +11,7 @@ app.use('/api/peep', peepRouter);
 
 app.all('*', function(req, res){
   debug('hit 404 route');
-  res.status(404).send('not found');
+  res.status(404).send();
 });
 
 const server = app.listen(port, function(){

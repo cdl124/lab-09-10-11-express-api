@@ -35,81 +35,89 @@ describe('testing module peep-router', function(){
   });
 
   describe('testing POST /api/peep', function(){
-    describe('with body {name: "test name"}', function(){
-      after((done) => {
-        storage.pool = {};
-        done();
-      });
-
-      it('should return a name', function(done){
-        request.post(baseUrl)
-          .send({name: 'test name'})
-          .end((err, res) => {
-            expect(res.status).to.equal(200);
-            expect(res.body.name).to.equal('test name');
-            expect(!res.body.id);
-            done();
-          });
-      });
+    after((done) => {
+      storage.pool = {};
+      done();
     });
 
-    describe('with no body', function(done){
+    it('should return a name with body {name: "test name"}', function(done) {
       request.post(baseUrl)
+        .send({name: 'test name'})
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          expect(res.body.name).to.equal('test name');
+          // expect(!!res.body.id);
+          done();
+        });
+    });
+    it('should return status 400 bad request', (done) => {
+      request.post('localhost:3000/api/peep')
+        .send({apple: 'fuji'})
         .end((err, res) => {
           expect(res.status).to.equal(400);
-          expect(res.test).to.equal('bad request');
+          expect(res.text).to.equal('bad request');
           done();
         });
     });
   }); // end of POST test module
 
-  describe('testing GET /api/peep', function(){
-    before((done) => {
-      this.tempPeep = new Peep('test data');
-      storage.setItem('peep', this.tempPeep);
-      done();
-    });
-    after((done) => {
-      storage.pool = {};
-      done();
-    });
+  // describe('testing GET /api/peep', function(){
+  //   before((done) => {
+  //     this.tempPeep = new Peep('test name');
+  //     storage.setItem('peep', this.tempPeep);
+  //     done();
+  //   });
+  //   after((done) => {
+  //     storage.pool = {};
+  //     done();
+  //   });
+  //
+  //   it('should return a name', (done) => {
+  //     request.get(`${baseUrl}/${this.tempPeep.id}`)
+  //       .end((err, res) => {
+  //         expect(res.status).to.equal(200);
+  //         expect(res.body.name).to.equal(this.tempPeep.name);
+  //         expect(res.body.id).to.equal(this.tempPeep.id);
+  //         done();
+  //       });
+  //   });
+  // }); // end of GET test module
 
-    it('should return a name', (done) => {
-      request.get(`${baseUrl}/${this.tempPeep.id}`)
-        .end((err, res) => {
-          expect(res.status).to.equal(200);
-          expect(res.body.name).to.equal(this.tempPeep.name);
-          expect(res.body.id).to.equal(this.tempPeep.id);
-          done();
-        });
-    });
-  }); // end of GET test module
-
-  describe('testing PUT /api/peep', function(){
-    before((done) => {
-      this.tempPeep = new Peep('test data');
-      storage.setItem('peep', this.tempPeep);
-      done();
-    });
-    after((done) => {
-      storage.pool = {};
-      done();
-    });
-
-    it('should update a name', (done) => {
-      request.get(`${baseUrl}/${this.tempPeep.id}`)
-        .send({name: 'test name changed'})
-        .end((err, res) => {
-          expect(res.status).to.equal(200);
-          expect(res.body.name).to.equal('test name changed');
-          expect(res.body.id).to.equal(this.tempPeep.id);
-          done();
-        });
-    });
-  }); // end of PUT test module
-
+  // describe('testing PUT /api/peep', function(){
+  //   before((done) => {
+  //     this.tempPeep = new Peep('test name');
+  //     storage.setItem('peep', this.tempPeep);
+  //     done();
+  //   });
+  //   after((done) => {
+  //     storage.pool = {};
+  //     done();
+  //   });
+  //
+  //   it('should update a name', (done) => {
+  //     request.get(`${baseUrl}/${this.tempPeep.id}`)
+  //       .send({name: 'test name change'})
+  //       .end((err, res) => {
+  //         expect(res.status).to.equal(200);
+  //         expect(res.body.name).to.equal('test name change');
+  //         expect(res.body.id).to.equal(this.tempPeep.id);
+  //         done();
+  //       });
+  //   });
+  // }); // end of PUT test module
+  //
   // describe('testing DELETE /api/peep', function(){
-  //   // delete it!
-  // });
-  // end of DELETE test module
+  //   before((done) => {
+  //     this.tempPeep = new Peep('test name');
+  //     storage.setItem('peep', this.tempPeep);
+  //     done();
+  //   });
+  //   it('should delete a name', (done) => {
+  //     request.del(`${baseUrl}/${this.tempPeep.id}`)
+  //       .end((err, res) => {
+  //         expect(res.status).to.equal(200);
+  //         done();
+  //       });
+  //   });
+  // }); // end of DELETE test module
 }); // end of testing peep module

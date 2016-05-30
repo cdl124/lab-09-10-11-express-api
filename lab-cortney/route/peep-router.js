@@ -9,38 +9,41 @@ const storage = require('../lib/storage');
 const Peep = require('../model/peep');
 
 // create a peep
-function createPeep(reqBody){
-  debug('createPeep');
-  console.log('Outside promise:', reqBody);
-  return new Promise(function(resolve, reject){
-    debugger;
-    var peep;
-    try {
-      peep = new Peep(reqBody.name);
-      console.log(reqBody.name);
-    } catch (err) {
-      reject(err);
-    }
-    storage.setItem('peep', peep).then(function(peep){
-      resolve(peep);
-    }).catch(function(err){
-      reject(err);
-    });
-  });
-} // end of createPeep
+// function createPeep(reqBody){
+//   debug('createPeep');
+//   return new Promise(function(resolve, reject){
+//     debugger;
+//     var peep;
+//     try {
+//       peep = new Peep(reqBody.name);
+//       console.log('Yay new peep inside try block');
+//     } catch (err) {
+//       reject(err);
+//     }
+//     storage.setItem('peep', peep).then(function(peep){
+//       console.log('this name hit createPeep');
+//       resolve(peep);
+//     }).catch(function(err){
+//       reject(err);
+//     });
+//   });
+// } // end of createPeep
 
 peepRouter.post('/', jsonParser, function(req, res){
-  debug('hit endpoint /api/peep POST');
-  createPeep(req.body).then(function(peep) {
-    res.status(200).json(peep);
-  }).catch(function(err){
-    console.error('ERROR POSTING:', err.message);
-    if (AppError.isAppError(err)){
+  // debug('hit endpoint /api/peep POST');
+  try {
+    var newPeep = new Peep(req.body.name);
+    storage.setItem('peep' , newPeep).then( (peep) => {
+      res.status(200).send(peep);
+    });
+  } catch (err) {
+    if (AppError.isAppError(err)) {
+      console.log(err.message);
       res.status(err.statusCode).send(err.responseMessage);
-      return;
+    } else {
+      res.status(400).send('bad request');
     }
-    res.status(500).send('internal server error');
-  });
+  }
 }); // end of post
 
 peepRouter.get('/:id', function(req, res){
