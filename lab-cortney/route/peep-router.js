@@ -8,27 +8,6 @@ const AppError = require('../lib/app-error');
 const storage = require('../lib/storage');
 const Peep = require('../model/peep');
 
-// create a peep
-// function createPeep(reqBody){
-//   debug('createPeep');
-//   return new Promise(function(resolve, reject){
-//     debugger;
-//     var peep;
-//     try {
-//       peep = new Peep(reqBody.name);
-//       console.log('Yay new peep inside try block');
-//     } catch (err) {
-//       reject(err);
-//     }
-//     storage.setItem('peep', peep).then(function(peep){
-//       console.log('this name hit createPeep');
-//       resolve(peep);
-//     }).catch(function(err){
-//       reject(err);
-//     });
-//   });
-// } // end of createPeep
-
 peepRouter.post('/', jsonParser, function(req, res){
   // debug('hit endpoint /api/peep POST');
   try {
@@ -53,18 +32,23 @@ peepRouter.get('/:id', function(req, res){
     if (AppError.isAppError(err)){
       res.status(err.statusCode).send(err.responseMessage);
     }
+    res.status(400).send('bad request');
     console.error('ERROR GETTING:', err.message);
   });
 });
 
 peepRouter.put('/:id', jsonParser, function(req, res){
   storage.fetchItem('peep', req.params.id).then(function(updatedPeep){
+    if (!req.body.name){
+      res.status(400).send('put in a name!');
+    }
     updatedPeep.name = req.body.name;
     res.status(200).json(updatedPeep);
   }).catch(function(err){
     if (AppError.isAppError(err)){
       res.status(err.statusCode).send('error updating your peep');
     }
+    res.status(400).send('bad request');
     console.error('ERROR PUTTING:', err.message);
   });
 });

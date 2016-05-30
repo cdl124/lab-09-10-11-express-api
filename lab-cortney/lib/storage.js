@@ -25,7 +25,11 @@ exports.fetchItem = function(schema, id){
       return reject(err);
     }
     if (!this.pool[schema][id]){
-      var err = AppError.error404('storage item not found');
+      err = AppError.error404('storage item not found');
+      return reject(err);
+    }
+    if (this.pool[schema][id] === false) {
+      err = AppError.error400('put in an id!');
       return reject(err);
     }
     resolve(this.pool[schema][id]);
@@ -40,7 +44,7 @@ exports.deleteItem = function(schema, id){
       return reject(err);
     }
     if (!this.pool[schema][id]){
-      var err = AppError.error404('storage item not found');
+      err = AppError.error404('storage item not found');
       return reject(err);
     }
     delete this.pool[schema][id];
